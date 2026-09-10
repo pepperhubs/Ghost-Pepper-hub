@@ -1,0 +1,33 @@
+name: Reset Commit History
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reset-history:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+
+      - name: Reset history to orphan branch
+        run: |
+          git checkout --orphan novo-historico
+          git add -A
+          git commit -m "Novo histórico - Código original"
+          git branch -D main
+          git branch -m main
+
+      - name: Force push to main
+        run: |
+          git push -f origin main
